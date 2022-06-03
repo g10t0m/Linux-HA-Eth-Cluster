@@ -1,0 +1,16 @@
+#!/bin/bash
+# Bonding working with any switch, any VMXNET3
+# Simple use in /etc/rc.local
+# Needs 2 eth, e.g. ens192 and ens224 in my case
+# example Cluster IP: 192.168.1.100, gw 192.168.1.254
+#
+ip link add bond0 type bond miimon 100 use_carrier 0 fail_over_mac follow mode active-backup
+ip link set ens192 master bond0
+ip link set ens224 master bond0
+ifconfig ens192 down
+ifconfig ens224 down
+ifconfig bond0 up
+ifconfig ens192 up
+ifconfig ens224 up
+ifconfig bond0 192.168.1.100 netmask 255.255.255.0
+route add default gw 192.168.1.254 bond0
